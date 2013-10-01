@@ -4,6 +4,7 @@
 	
 	$users = retrieveUsers();
 	
+	// check if a user is being deleted using th esubmit buttons named after the username
 	for($i=0 ; $i<count($users) ; $i++){
 		$user = $users[$i];
 		if(isset($_POST["$user"])){
@@ -23,6 +24,7 @@
 			<legend>Delete Account</legend>
 			<form method="post" action="">
 			<?php
+				//table of users to delete
 				echo '<table border="1px" >';
 					echo '<tr>';
 						echo '<th>';
