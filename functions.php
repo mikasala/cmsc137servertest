@@ -1,35 +1,55 @@
 <?php
-	include "functions.php";
 	
-	if(isset($_POST["login"])){
-		if($_POST["user"]!=NULL && $_POST["password"]!=NULL){
-			$pw = $_POST["password"];
-			$user = $_POST["user"];
-			if(checkUser($user,$pw)==1){
-				$password = getPassword($user);
-				if($pw==$password){
-					$_SESSION["user"] = $user;
-					header('Location: profile.php');
-				}else echo "Invalid Username or Password.".'<br/><br/>';
-			}else echo "Invalid Username or Password.".'<br/><br/>';
-		}
+	session_start();
+
+
+	function connect(){
+		return mysqli_connect("localhost","root","user","cmsc137");
 	}
+
+	function addUser($username,$password){
+		$con=connect();
+		$stmt = "INSERT INTO user VALUES('$username','$password');";
+		$a=mysqli_query($con,$stmt);
+	}
+	
+	function editUserPwd($username,$password){
+		$con=connect();
+		$stmt = "UPDATE user SET password='$password' where username='$username';";
+		$a=mysqli_query($con,$stmt);
+	}
+	
+	function checkUser($username){
+		$con=connect();
+		$stmt = "SELECT username from user where username='$username';";
+		$a=mysqli_fetch_array(mysqli_query($con,$stmt));
+		if($a[0]!=NULL)
+			return 1;
+	}
+	
+	function getPassword($username){
+		$con=connect();
+		$stmt = "SELECT password from user where username='$username';";
+		$a=mysqli_fetch_array(mysqli_query($con,$stmt));
+		return $a[0];
+	}
+	
+	function retrieveUsers(){
+		$user = array();
+		$con=connect();
+		$stmt = "SELECT username from user;";
+		$result = mysqli_query($con,$stmt);
+		
+		while($row=mysqli_fetch_assoc($result))
+			$users[] = $row['username'];
+
+		return $users;
+	}
+	
+	function deleteUser($username){
+		$con=connect();
+		$stmt = "DELETE from user where username = '$username';";
+		$result = mysqli_query($con,$stmt);
+	}
+	
 ?>
-<html>
-	<head>
-		<title>Server Test</title>
-	</head>
-	<body>
-		<fieldset>
-			<legend>Log In</legend>
-			<form method="post" action="">
-				Userame: <input type="text" name="user" id="user"/><br/>
-				Password: <input type="password" name="password" id="password"/><br/>
-				<input type="submit" name="login" value="OK"/>
-			</form>
-		</fieldset><br/>
-		<form method="post" action="addeditinfo.php">
-			<input type="submit" value="Add Account" name="addAccount"/>
-		</form>
-	</body>
-</html>
