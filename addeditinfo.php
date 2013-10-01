@@ -9,29 +9,35 @@
 	
 	$user = $_SESSION["user"];
 	
+	//adding account
 	if(isset($_POST["addAccount"]))
 		$add=1;
-		
+	
+	//editting account
 	if(isset($_POST["editAccount"])){
 		$edit=1;
 		$pw = getPassword($user);
 	}
 	
+	//new account or editting account
 	if(isset($_POST["newPwd"]) && isset($_POST["confirmPwd"])){
 		$newPwd = $_POST["newPwd"];
 		$confirmPwd = $_POST["confirmPwd"];
 		
+		//if adding get the POST username
 		if($_POST["add"]==1){
 			$add=1;
 			$user = $_POST["username"];
 		}
 		
+		//if editting, get SESSION username and its Password
 		if($_POST["edit"]==1){
 			$edit=1;
 			$user = $_SESSION["user"];
 			$pw = getPassword($user);
 		}
 		
+		//check if the input password id equal to its confirmation password
 		if($confirmPwd==$newPwd){
 			echo "Success!".'<br/><br/>';
 			$success=1;
@@ -40,9 +46,12 @@
 			echo "Password does not match."."<br/><br/>";
 		}
 		
+		//if equal
 		if($success==1){
+			//add to the database
 			if($add==1)
 				addUser($user,$newPwd);
+			//update database
 			if($edit==1)
 				editUserPwd($user,$newPwd);
 		}
@@ -56,9 +65,9 @@
 		<title>User Account</title>
 	</head>
 	<body>
-		<fieldset>
+		<fieldset style="width:40%;">
 			<?php
-				if($add==1){
+				if($add==1){ // new account
 					echo '<legend>User Account</legend>';
 					echo '<form method="post" action="">';
 							echo 'Username: <input type="text" name="username"/><br/>';
@@ -69,7 +78,7 @@
 					echo '</form>';
 				}
 				
-				if($edit==1){
+				if($edit==1){ // update account
 					echo '<legend>Edit Password</legend>';
 					echo '<form method="post" action="">';
 							echo 'Current Password: <input type="text" value="'.$pw.'" name="password" readonly/><br/>';
@@ -83,6 +92,7 @@
 			?>
 		</fieldset>
 		<?php
+			//back buttons
 			if($add==1)
 				echo '<form method="post" action="index.php">';
 			if($edit==1)
